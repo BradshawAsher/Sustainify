@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Health and Fitness Challenges</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .challenge-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .challenge {
+            margin-bottom: 15px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .done-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .done-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="challenge-container">
+        <div class="challenge">
+            <span>Challenge 1: Drink 8 glasses of water every day.</span>
+            <button class="done-button">Done</button>
+        </div>
+        <div class="challenge">
+            <span>Challenge 2: Take a 30-minute walk every day.</span>
+            <button class="done-button">Done</button>
+        </div>
+        <div class="challenge">
+            <span>Challenge 3: Do 20 minutes of stretching exercises.</span>
+            <button class="done-button">Done</button>
+        </div>
+    </div>
+
+    <script>
+        const doneButtons = document.querySelectorAll('.done-button');
+
+        function handleDoneClick(event) {
+            const challengeElement = event.target.parentElement;
+            challengeElement.classList.toggle('completed');
+        }
+
+        doneButtons.forEach(button => {
+            button.addEventListener('click', handleDoneClick);
+        });
+    </script>
+</body>
+</html>
