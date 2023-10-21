@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Carbon Emission Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Carbon Emission Calculator</h1>
+
+        <!-- Text input for calories burned -->
+        <label for="caloriesInput">Calories Burned from Run, Scooter, Biking, etc. (kcal):</label>
+        <input type="number" id="caloriesInput" placeholder="Enter calories burned"><br>
+
+        <!-- Button to calculate emissions saved -->
+        <button onclick="calculateEmissions()">Calculate Emissions Saved</button><br>
+
+        <!-- Display area for the calculated emissions saved -->
+        <p id="emissionsOutput"></p>
+
+        <!-- Display area for the comparative metric -->
+        <p id="comparativeMetric"></p>
+    </div>
+
+    <script>
+        // JavaScript function to calculate emissions saved
+        function calculateEmissions() {
+            // Get the value from the calories input field
+            var caloriesBurned = parseFloat(document.getElementById("caloriesInput").value);
+
+            // Calculate emissions saved (assuming 1 kcal burned saves 0.03 kg of CO2 emissions)
+            var emissionsSaved = (caloriesBurned * 0.03).toFixed(2); // Round to 2 decimal places
+
+            // Display the calculated emissions saved
+            document.getElementById("emissionsOutput").innerHTML = "You saved approximately " + emissionsSaved + " kg of CO2 emissions by not driving.";
+
+            // Calculate the comparative metric (e.g., equivalent miles not driven)
+            var equivalentMiles = (emissionsSaved / 0.2).toFixed(2); // Assuming 0.2 kg of CO2 emissions per mile
+
+            // Display the comparative metric
+            document.getElementById("comparativeMetric").innerHTML = "This is equivalent to not driving for approximately " + equivalentMiles + " miles in an average car.";
+        }
+    </script>
+</body>
+</html>

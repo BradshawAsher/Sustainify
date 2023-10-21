@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Activity Tracker</title>
+    <!-- Include Chart.js from a CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Activity Tracker</h1>
+
+    <h2>Enter Daily Calories Burned</h2>
+
+    <!-- Input slots for each day of the week -->
+    <label for="caloriesInputMon">Monday (kcal):</label>
+    <input type="number" id="caloriesInputMon" placeholder="Enter calories burned for Monday"><br>
+
+    <label for="caloriesInputTue">Tuesday (kcal):</label>
+    <input type="number" id="caloriesInputTue" placeholder="Enter calories burned for Tuesday"><br>
+
+    <label for="caloriesInputWed">Wednesday (kcal):</label>
+    <input type="number" id="caloriesInputWed" placeholder="Enter calories burned for Wednesday"><br>
+
+    <label for="caloriesInputThu">Thursday (kcal):</label>
+    <input type="number" id="caloriesInputThu" placeholder="Enter calories burned for Thursday"><br>
+
+    <label for="caloriesInputFri">Friday (kcal):</label>
+    <input type="number" id="caloriesInputFri" placeholder="Enter calories burned for Friday"><br>
+
+    <label for="caloriesInputSat">Saturday (kcal):</label>
+    <input type="number" id="caloriesInputSat" placeholder="Enter calories burned for Saturday"><br>
+
+    <label for="caloriesInputSun">Sunday (kcal):</label>
+    <input type="number" id="caloriesInputSun" placeholder="Enter calories burned for Sunday"><br>
+
+    <!-- Calculate button -->
+    <button onclick="calculateTotals()">Calculate</button>
+
+    <h2>Weekly Totals</h2>
+    <p>Total Calories Burned: <span id="totalCalories">0</span> kcal</p>
+    <p>Carbon Emissions Saved: <span id="emissionsSaved">0</span> kg CO2</p>
+    <p>Equivalent Miles Not Driven: <span id="milesNotDriven">0</span> miles</p>
+
+    <!-- Feedback on calories difference compared to the last week -->
+    <p>Calories Burned Difference from Last Week: <span id="caloriesDifference">0</span> kcal</p>
+
+    <!-- Canvas element for the chart -->
+    <canvas id="activityChart" width="400" height="200"></canvas>
+    <script>
+        // Initialize variables to store data
+        var dailyCaloriesData = {
+            "Monday": 0,
+            "Tuesday": 0,
+            "Wednesday": 0,
+            "Thursday": 0,
+            "Friday": 0,
+            "Saturday": 0,
+            "Sunday": 0
+        };
+    
+        var lastWeekCaloriesData = JSON.parse(localStorage.getItem('lastWeekCaloriesData')) || {};
+    
+        // Variable to store the chart instance
+        var activityChart;
+    
+        // JavaScript function to calculate totals and update UI
+        function calculateTotals() {
+            // Get the values from each day's calories input field
+            var caloriesMon = parseFloat(document.getElementById("caloriesInputMon").value) || 0;
+            var caloriesTue = parseFloat(document.getElementById("caloriesInputTue").value) || 0;
+            var caloriesWed = parseFloat(document.getElementById("caloriesInputWed").value) || 0;
+            var caloriesThu = parseFloat(document.getElementById("caloriesInputThu").value) || 0;
+            var caloriesFri = parseFloat(document.getElementById("caloriesInputFri").value) || 0;
+            var caloriesSat = parseFloat(document.getElementById("caloriesInputSat").value) || 0;
+            var caloriesSun = parseFloat(document.getElementById("caloriesInputSun").value) || 0;
+    
+            // Update the dailyCaloriesData object with the input values
+            dailyCaloriesData["Monday"] = caloriesMon;
+            dailyCaloriesData["Tuesday"] = caloriesTue;
+            dailyCaloriesData["Wednesday"] = caloriesWed;
+            dailyCaloriesData["Thursday"] = caloriesThu;
+            dailyCaloriesData["Friday"] = caloriesFri;
+            dailyCaloriesData["Saturday"] = caloriesSat;
+            dailyCaloriesData["Sunday"] = caloriesSun;
+    
+            // Calculate the total calories burned for the week
+            var totalCalories = caloriesMon + caloriesTue + caloriesWed + caloriesThu + caloriesFri + caloriesSat + caloriesSun;
+    
+            // Update the total calories burned
+            document.getElementById("totalCalories").textContent = totalCalories;
+    
+            // Calculate and update carbon emissions saved (adjust the conversion factor as needed)
+            var emissionsSaved = (totalCalories * 0.03).toFixed(2);
+            document.getElementById("emissionsSaved").textContent = emissionsSaved;
+    
+            // Calculate and update equivalent miles not driven (adjust the conversion factor as needed)
+            var milesNotDriven = (emissionsSaved / 0.2).toFixed(2); // Assuming 0.2 kg CO2 emissions per mile
+            document.getElementById("milesNotDriven").textContent = milesNotDriven;
+    
+            // Calculate the difference in calories burned compared to the last week
+            var lastWeekTotalCalories = Object.values(lastWeekCaloriesData).reduce((acc, cur) => acc + cur, 0);
+            var caloriesDifference = totalCalories - lastWeekTotalCalories;
+            document.getElementById("caloriesDifference").textContent = caloriesDifference;
+    
+            // Update the data for the chart
+            var activityData = {
+                labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                datasets: [{
+                    label: "Activity Level",
+                    data: [caloriesMon, caloriesTue, caloriesWed, caloriesThu, caloriesFri, caloriesSat, caloriesSun],
+                    fill: false,
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 2,
+                }],
+            };
+    
+            // Get the canvas element
+            var ctx = document.getElementById('activityChart').getContext('2d');
+    
+            // Remove the existing chart if it exists
+            if (activityChart) {
+                activityChart.destroy();
+            }
+    
+            // Initialize a new line chart
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: activityData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Weekly Activity Chart'
+                        }
+                    }
+                }
+            });
+    
+            // Store the data for the current week in localStorage
+            localStorage.setItem('caloriesData', JSON.stringify(dailyCaloriesData));
+    
+            // Store the data for the last week in localStorage for future reference
+            localStorage.setItem('lastWeekCaloriesData', JSON.stringify(lastWeekCaloriesData));
+        }
+    
+        // Initialize the form with stored data when the page loads
+        var storedData = JSON.parse(localStorage.getItem('caloriesData'));
+        if (storedData) {
+            document.getElementById("caloriesInputMon").value = storedData["Monday"];
+            document.getElementById("caloriesInputTue").value = storedData["Tuesday"];
+            document.getElementById("caloriesInputWed").value = storedData["Wednesday"];
+            document.getElementById("caloriesInputThu").value = storedData["Thursday"];
+            document.getElementById("caloriesInputFri").value = storedData["Friday"];
+            document.getElementById("caloriesInputSat").value = storedData["Saturday"];
+            document.getElementById("caloriesInputSun").value = storedData["Sunday"];
+        }
+    </script>
+    
+
+</body>
+</html>
